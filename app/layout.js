@@ -16,9 +16,6 @@ export default function RootLayout({ children }) {
   return (
     <ClerkProvider>
       <html lang="en">
-        {/* <Head>
-          <link rel="icon" href="/favicon.ico" />
-        </Head> */}
         <body className={`${inter.className}`}>
           <Header />
           <main className="min-h-screen">{children}</main>
