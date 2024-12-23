@@ -1,6 +1,6 @@
 "use client";
 
-import { updateDefaultAccount } from "@/actions/accounts";
+import { updateDefaultAccount } from "@/actions/account";
 import {
   Card,
   CardContent,
@@ -12,7 +12,7 @@ import { Switch } from "@/components/ui/switch";
 import useFetch from "@/hooks/useFetch";
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { toast } from "sonner";
 
 const AccountCard = ({ account }) => {
