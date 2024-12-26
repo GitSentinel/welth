@@ -36,10 +36,13 @@ import {
 } from "@/components/ui/tooltip";
 import { categoryColors } from "@/data/categories";
 import useFetch from "@/hooks/useFetch";
+import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import {
   ChevronDown,
   ChevronUp,
+  ChevronLeft,
+  ChevronRight,
   Clock,
   MoreHorizontal,
   RefreshCw,
@@ -50,6 +53,8 @@ import {
 import { useRouter } from "next/navigation";
 import React, { useEffect, useMemo, useState } from "react";
 import { BarLoader } from "react-spinners";
+
+const ITEMS_PER_PAGE = 10;
 
 const RECURRING_INTERVALS = {
   DAILY: "Daily",
@@ -72,6 +77,7 @@ const TransactionTable = ({ transactions }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
   const [recurringFilter, setRecurringFilter] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
 
   const filteredAndSortedTransactions = useMemo(() => {
     let result = [...transactions];
@@ -124,6 +130,17 @@ const TransactionTable = ({ transactions }) => {
     return result;
   }, [transactions, searchTerm, typeFilter, recurringFilter, sortConfig]);
 
+  const totalPages = Math.ceil(
+    filteredAndSortedTransactions.length / ITEMS_PER_PAGE
+  );
+  const paginatedTransactions = useMemo(() => {
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredAndSortedTransactions.slice(
+      startIndex,
+      startIndex + ITEMS_PER_PAGE
+    );
+  }, [filteredAndSortedTransactions, currentPage]);
+
   const handleSort = (field) => {
     setSortConfig((current) => ({
       field,
@@ -142,9 +159,9 @@ const TransactionTable = ({ transactions }) => {
 
   const handleSelectAll = () => {
     setSelectedIds((current) =>
-      current.length === filteredAndSortedTransactions.length
+      current.length === paginatedTransactions.length
         ? []
-        : filteredAndSortedTransactions.map((transaction) => transaction.id)
+        : paginatedTransactions.map((t) => t.id)
     );
   };
 
@@ -177,6 +194,11 @@ const TransactionTable = ({ transactions }) => {
     setTypeFilter("");
     setRecurringFilter("");
     setSelectedIds([]);
+  };
+
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+    setSelectedIds([]); // Clear selections on page change
   };
 
   return (
@@ -252,12 +274,11 @@ const TransactionTable = ({ transactions }) => {
             <TableRow>
               <TableHead className="w-[50px]">
                 <Checkbox
-                  onCheckedChange={handleSelectAll}
                   checked={
-                    selectedIds.length ===
-                      filteredAndSortedTransactions.length &&
-                    filteredAndSortedTransactions.length > 0
+                    selectedIds.length === paginatedTransactions.length &&
+                    paginatedTransactions.length > 0
                   }
+                  onCheckedChange={handleSelectAll}
                 />
               </TableHead>
 
@@ -313,20 +334,22 @@ const TransactionTable = ({ transactions }) => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredAndSortedTransactions.length === 0 ? (
-              <TableRow
-                colSpan={7}
-                className="text-center text-muted-foreground"
-              >
-                <TableCell>No Transactions Found</TableCell>
+            {paginatedTransactions.length === 0 ? (
+              <TableRow>
+                <TableCell
+                  colSpan={7}
+                  className="text-center text-muted-foreground"
+                >
+                  No transactions found
+                </TableCell>
               </TableRow>
             ) : (
-              filteredAndSortedTransactions.map((transaction) => (
+              paginatedTransactions.map((transaction) => (
                 <TableRow key={transaction.id}>
                   <TableCell>
                     <Checkbox
-                      onCheckedChange={() => handleSelect(transaction.id)}
                       checked={selectedIds.includes(transaction.id)}
+                      onCheckedChange={() => handleSelect(transaction.id)}
                     />
                   </TableCell>
                   <TableCell>
@@ -344,16 +367,15 @@ const TransactionTable = ({ transactions }) => {
                     </span>
                   </TableCell>
                   <TableCell
-                    className="text-right font-medium"
-                    style={{
-                      color:
-                        transaction.type === "INCOME"
-                          ? "text-green-500"
-                          : "text-red-500",
-                    }}
+                    className={cn(
+                      "text-right font-medium",
+                      transaction.type === "EXPENSE"
+                        ? "text-red-500"
+                        : "text-green-500"
+                    )}
                   >
-                    {transaction.type === "INCOME" ? "+" : "-"}
-                    Rs. {transaction.amount.toFixed(2)}
+                    {transaction.type === "EXPENSE" ? "-" : "+"}Rs.
+                    {transaction.amount.toFixed(2)}
                   </TableCell>
                   <TableCell>
                     {transaction.isRecurring ? (
@@ -361,7 +383,7 @@ const TransactionTable = ({ transactions }) => {
                         <Tooltip>
                           <TooltipTrigger>
                             <Badge
-                              variant="outline"
+                              variant="secondary"
                               className="gap-1 bg-purple-100 text-purple-700 hover:bg-purple-200"
                             >
                               <RefreshCw className="h-3 w-3" />
@@ -378,7 +400,7 @@ const TransactionTable = ({ transactions }) => {
                               <div>
                                 {format(
                                   new Date(transaction.nextRecurringDate),
-                                  "PP"
+                                  "PPP"
                                 )}
                               </div>
                             </div>
@@ -388,19 +410,18 @@ const TransactionTable = ({ transactions }) => {
                     ) : (
                       <Badge variant="outline" className="gap-1">
                         <Clock className="h-3 w-3" />
-                        One-Time
+                        One-time
                       </Badge>
                     )}
                   </TableCell>
-
                   <TableCell>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="p-0 h-8 w-8">
+                        <Button variant="ghost" className="h-8 w-8 p-0">
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent>
+                      <DropdownMenuContent align="end">
                         <DropdownMenuItem
                           onClick={() =>
                             router.push(
@@ -426,6 +447,30 @@ const TransactionTable = ({ transactions }) => {
           </TableBody>
         </Table>
       </div>
+
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center gap-2">
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+          <span className="text-sm">
+            Page {currentPage} of {totalPages}
+          </span>
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+          >
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        </div>
+      )}
     </div>
   );
 };
