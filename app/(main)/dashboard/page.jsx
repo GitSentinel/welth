@@ -1,11 +1,11 @@
 import { getUserAccounts } from "@/actions/dashboard";
-import CreateAccountDrawer from "@/components/mycomponents/create-account-drawer";
 import { Card, CardContent } from "@/components/ui/card";
 import { Plus } from "lucide-react";
 import React from "react";
 import AccountCard from "./_components/AccountCard";
 import { getCurrentBudget } from "@/actions/budget";
 import BudgetProgress from "./_components/budget-progress";
+import { CreateAccountDrawer } from "@/components/mycomponents/create-account-drawer";
 
 async function DashboardPage() {
   const accounts = await getUserAccounts();
