@@ -1,36 +1,44 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Welth
 
-## Getting Started
+**Welth** is a powerful and user-friendly personal finance management tool that helps individuals track expenses, set budgets, and gain insights into their financial health. The application provides an intuitive interface and robust features designed to simplify financial management.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **Expense Tracking:** Log daily expenses effortlessly.
+- **Budget Management:** Set and track spending limits for various categories.
+- **Analytics and Insights:** Visualize spending patterns with graphs and charts.
+- **Multi-Platform Support:** Accessible on web and mobile devices.
+- **Data Security:** Ensures user data is encrypted and stored securely.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Installation
 
-## Learn More
+### Prerequisites
+- [Node.js](https://nodejs.org/) (v14 or above)
+- [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
 
-To learn more about Next.js, take a look at the following resources:
+### Steps
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/GitSentinel/welth.git
+   
+2. Navigate to the project directory:
+   ```bash
+   cd welth
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+3. Install dependencies:
+   ```bash
+   npm install
+   # or
+   yarn install
 
-## Deploy on Vercel
+4. Start the development server:
+   ```bash
+   npm run start
+   # or
+   yarn start
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
